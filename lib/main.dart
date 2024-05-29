@@ -1,4 +1,5 @@
 import 'package:audiobook/cubit/books_cubit.dart';
+import 'package:audiobook/cubit/playlist_cubit.dart';
 import 'package:audiobook/pages/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +17,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) => BooksCubit(),
+        ),
+        BlocProvider(
+          create: (context) => PlaylistCubit(),
         ),
       ],
       child: MaterialApp(

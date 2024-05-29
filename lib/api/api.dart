@@ -1,3 +1,4 @@
+import 'package:audiobook/models/audiotrack.dart';
 import 'package:audiobook/models/book.dart';
 import 'package:dio/dio.dart';
 import 'package:xml/xml.dart';
@@ -12,6 +13,21 @@ class Api {
       List<AudioBook> list = [];
       for (var element in response.data["books"]) {
         list.add(AudioBook.fromJson(element));
+      }
+      return ApiResponse.success(data: list);
+    } else {
+      return ApiResponse.error(message: response.data["error"]);
+    }
+  }
+
+  Future<ApiResponse<List<Audiotrack>>> getAudioTracks(String id) async {
+    final response = await dio.get(
+      'https://librivox.org/api/feed/audiotracks?project_id=$id&format=json',
+    );
+    if (response.statusCode == 200) {
+      List<Audiotrack> list = [];
+      for (var element in response.data["sections"]) {
+        list.add(Audiotrack.fromJson(element));
       }
       return ApiResponse.success(data: list);
     } else {
