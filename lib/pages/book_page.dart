@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:audiobook/cubit/playlist_cubit.dart';
 import 'package:audiobook/layouts/list_layout.dart';
 import 'package:audiobook/models/book.dart';
@@ -32,6 +33,7 @@ class _BookPageState extends State<BookPage> {
   @override
   Widget build(BuildContext context) {
     PlaylistState state = context.watch<PlaylistCubit>().state;
+    List<MediaItem> items = state.getMediaItems();
     return ListLayout(
       body: state.isLoading
           ? const Column(
@@ -43,11 +45,18 @@ class _BookPageState extends State<BookPage> {
               ],
             )
           : Column(
-              children: state.list
+              children: items
                   .map(
                     (e) => CrossListElement(
-                      onPressed: () {},
-                      child: AudiotrackWidget(track: e),
+                      onPressed: () {
+                        state.audioHandler.skipToQueueItem(
+                          items.indexOf(e),
+                        );
+                      },
+                      child: AudiotrackWidget(
+                        track: e,
+                        audioHandler: state.audioHandler,
+                      ),
                     ),
                   )
                   .toList(),
