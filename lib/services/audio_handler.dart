@@ -1,8 +1,23 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 
 class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   AudioPlayer audioPlayer = AudioPlayer();
+  String bookId;
+  String bookName;
+  MyAudioHandler({
+    required this.bookId,
+    this.bookName = "undefined",
+  });
+
+  void setBookId(String id) {
+    bookId = id;
+  }
+
+  void setBookName(String name) {
+    bookName = name;
+  }
 
   UriAudioSource _createAudioSource(MediaItem item) {
     return ProgressiveAudioSource(Uri.parse(item.id));

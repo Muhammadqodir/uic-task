@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:audiobook/cubit/audioplayer_cubit.dart';
 import 'package:audiobook/cubit/playlist_cubit.dart';
 import 'package:audiobook/layouts/list_layout.dart';
 import 'package:audiobook/models/book.dart';
@@ -7,6 +8,7 @@ import 'package:audiobook/widgets/cross_list_element.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:just_audio/just_audio.dart';
 
 class BookPage extends StatefulWidget {
   const BookPage({
@@ -35,6 +37,7 @@ class _BookPageState extends State<BookPage> {
     PlaylistState state = context.watch<PlaylistCubit>().state;
     List<MediaItem> items = state.getMediaItems();
     return ListLayout(
+      back: true,
       body: state.isLoading
           ? const Column(
               children: [
@@ -49,13 +52,24 @@ class _BookPageState extends State<BookPage> {
                   .map(
                     (e) => CrossListElement(
                       onPressed: () {
-                        state.audioHandler.skipToQueueItem(
-                          items.indexOf(e),
-                        );
+                        AudioplayerCubit audioplayerCubit =
+                            context.read<AudioplayerCubit>();
+                        if (audioplayerCubit.state.audioHandler.bookId ==
+                            widget.book.id) {
+                          audioplayerCubit.state.audioHandler
+                              .skipToQueueItem(items.indexOf(e));
+                        } else {
+                          context.read<AudioplayerCubit>().setPlaylist(
+                                widget.book.id ?? "undefined",
+                                widget.book.title ?? "undefined",
+                                items,
+                                startPlaying: items.indexOf(e),
+                              );
+                        }
                       },
                       child: AudiotrackWidget(
                         track: e,
-                        audioHandler: state.audioHandler,
+                        book: widget.book,
                       ),
                     ),
                   )

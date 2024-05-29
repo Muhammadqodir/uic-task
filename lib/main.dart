@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:audiobook/cubit/audioplayer_cubit.dart';
 import 'package:audiobook/cubit/books_cubit.dart';
 import 'package:audiobook/cubit/playlist_cubit.dart';
 import 'package:audiobook/pages/splash_page.dart';
@@ -7,13 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-MyAudioHandler _audioHandler = MyAudioHandler();
+MyAudioHandler _audioHandler = MyAudioHandler(bookId: "undefined");
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   _audioHandler = await AudioService.init(
-      builder: () => MyAudioHandler(),
+      builder: () => MyAudioHandler(bookId: "undefined"),
       config: const AudioServiceConfig(
         androidNotificationChannelId: 'uz.uictask.audiobook',
         androidNotificationChannelName: 'AudioBook',
@@ -34,7 +35,10 @@ class MyApp extends StatelessWidget {
           create: (context) => BooksCubit(),
         ),
         BlocProvider(
-          create: (context) => PlaylistCubit(handler: _audioHandler),
+          create: (context) => PlaylistCubit(),
+        ),
+        BlocProvider(
+          create: (context) => AudioplayerCubit(handler: _audioHandler),
         ),
       ],
       child: MaterialApp(

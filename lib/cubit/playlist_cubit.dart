@@ -10,10 +10,9 @@ import 'package:meta/meta.dart';
 part 'playlist_state.dart';
 
 class PlaylistCubit extends Cubit<PlaylistState> {
-  PlaylistCubit({required MyAudioHandler handler})
+  PlaylistCubit()
       : super(
           PlaylistState(
-            audioHandler: handler,
             list: const [],
             currentIndex: 0,
             currentTime: 0,
@@ -25,7 +24,6 @@ class PlaylistCubit extends Cubit<PlaylistState> {
     ApiResponse<List<Audiotrack>> res = await Api().getAudioTracks(id);
     if (res.isSuccess) {
       emit(state.copyWith(list: res.data));
-      state.audioHandler.initTracks(traks: state.getMediaItems());
     } else {
       showErrorDialog(context, res.title, res.message);
     }

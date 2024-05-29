@@ -33,7 +33,7 @@ class _MainPageState extends State<MainPage> {
                   .map(
                     (e) => CrossListElement(
                       onPressed: () {
-                        Navigator.of(context).pushReplacement(
+                        Navigator.of(context).push(
                           CupertinoPageRoute(
                             builder: (context) => BookPage(book: e),
                           ),

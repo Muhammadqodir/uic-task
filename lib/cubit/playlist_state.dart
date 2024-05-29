@@ -2,13 +2,11 @@
 part of 'playlist_cubit.dart';
 
 class PlaylistState {
-  MyAudioHandler audioHandler;
   List<Audiotrack> list;
   int currentIndex;
   int currentTime;
   bool isLoading;
   PlaylistState({
-    required this.audioHandler,
     required this.list,
     required this.currentIndex,
     required this.currentTime,
@@ -40,7 +38,6 @@ class PlaylistState {
     bool? isLoading,
   }) {
     return PlaylistState(
-      audioHandler: audioHandler ?? this.audioHandler,
       list: list ?? this.list,
       currentIndex: currentIndex ?? this.currentIndex,
       currentTime: currentTime ?? this.currentTime,
