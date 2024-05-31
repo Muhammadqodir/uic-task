@@ -1,6 +1,8 @@
 import 'package:audiobook/models/audiotrack.dart';
 import 'package:audiobook/models/book.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xml/xml.dart';
 
 class Api {
@@ -28,6 +30,9 @@ class Api {
       List<Audiotrack> list = [];
       for (var element in response.data["sections"]) {
         list.add(Audiotrack.fromJson(element));
+        if (list.length > 16) {
+          break;
+        }
       }
       return ApiResponse.success(data: list);
     } else {
@@ -53,6 +58,26 @@ class Api {
       }
     } else {
       return "undefinde";
+    }
+  }
+
+  Future<void> downloadBook(AudioBook book, Function(double) onProgress) async {
+    ApiResponse<List<Audiotrack>> tracks =
+        await getAudioTracks(book.id ?? "undefined");
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    if (tracks.isSuccess) {
+      for (var element in tracks.data!) {
+        onProgress(tracks.data!.indexOf(element) / tracks.data!.length);
+        print("Downloading...");
+        print(element.listenUrl ?? "undefined");
+        await DefaultCacheManager().getSingleFile(
+          element.listenUrl ?? "undefined",
+          key: "${book.id ?? "udnefined"}_${element.id ?? "undefined"}",
+        );
+      }
+      List<String> chachedBooks = preferences.getStringList("books") ?? [];
+      chachedBooks.add(book.id ?? "undefined");
+      await preferences.setStringList("books", chachedBooks);
     }
   }
 }

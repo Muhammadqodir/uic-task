@@ -29,7 +29,6 @@ class _AudioBookCoverState extends State<AudioBookCover> {
       isLoading = true;
     });
     coverUrl = await Api().getBookCover(widget.id);
-    print(coverUrl);
     setState(() {
       isLoading = false;
     });

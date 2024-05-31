@@ -41,6 +41,8 @@ dependencies:
   audio_service: ^0.18.13
   just_audio: ^0.9.38
   audio_video_progress_bar: ^2.0.3
+  flutter_cache_manager: ^3.3.2
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   flutter_test:

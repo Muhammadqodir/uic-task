@@ -3,6 +3,7 @@ import 'package:audiobook/pages/main_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -19,7 +20,9 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void runApp() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
     await context.read<BooksCubit>().getData(context);
+    context.read<BooksCubit>().setOffileBooks(preferences.getStringList("books") ?? []);
     Navigator.of(context).pushReplacement(
       CupertinoPageRoute(
         builder: (context) => const MainPage(),

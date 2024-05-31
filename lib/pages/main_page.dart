@@ -18,6 +18,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     BooksState state = context.watch<BooksCubit>().state;
+    print(state.downloadedBooks);
     return ListLayout(
       body: state.isLoading
           ? const Column(
@@ -41,6 +42,9 @@ class _MainPageState extends State<MainPage> {
                       },
                       child: AudioBookWidget(
                         book: e,
+                        isDownloaded: state.downloadedBooks.contains(
+                          e.id ?? "undefined",
+                        ),
                       ),
                     ),
                   )

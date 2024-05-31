@@ -13,12 +13,19 @@ class BooksCubit extends Cubit<BooksState> {
     setLoading(true);
     ApiResponse<List<AudioBook>> res = await Api().getBooksList();
     if (res.isSuccess) {
-      print(res.data!.length);
       emit(state.copyWith(list: res.data));
     } else {
       showErrorDialog(context, res.title, res.message);
     }
     setLoading(false);
+  }
+
+  void setOffileBooks(List<String> list) {
+    emit(
+      state.copyWith(
+        downloadedBooks: list,
+      ),
+    );
   }
 
   void setLoading(bool loading) {
