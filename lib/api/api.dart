@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:audiobook/models/audiotrack.dart';
 import 'package:audiobook/models/book.dart';
 import 'package:dio/dio.dart';
@@ -66,10 +68,10 @@ class Api {
         await getAudioTracks(book.id ?? "undefined");
     SharedPreferences preferences = await SharedPreferences.getInstance();
     if (tracks.isSuccess) {
+      List<Audiotrack> list = [];
       for (var element in tracks.data!) {
         onProgress(tracks.data!.indexOf(element) / tracks.data!.length);
-        print("Downloading...");
-        print(element.listenUrl ?? "undefined");
+        list.add(element);
         await DefaultCacheManager().getSingleFile(
           element.listenUrl ?? "undefined",
           key: "${book.id ?? "udnefined"}_${element.id ?? "undefined"}",
@@ -78,6 +80,14 @@ class Api {
       List<String> chachedBooks = preferences.getStringList("books") ?? [];
       chachedBooks.add(book.id ?? "undefined");
       await preferences.setStringList("books", chachedBooks);
+      await preferences.setString(
+        "${book.id ?? "undefined"}_audiotracks",
+        jsonEncode(list),
+      );
+      await preferences.setString(
+        "${book.id ?? "undefined"}_bdata",
+        jsonEncode(book.toJson()),
+      );
     }
   }
 }

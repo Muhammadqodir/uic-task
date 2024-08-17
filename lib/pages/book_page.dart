@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:audiobook/cubit/audioplayer_cubit.dart';
+import 'package:audiobook/cubit/books_cubit.dart';
 import 'package:audiobook/cubit/playlist_cubit.dart';
 import 'package:audiobook/layouts/list_layout.dart';
 import 'package:audiobook/models/book.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BookPage extends StatefulWidget {
   const BookPage({
@@ -26,10 +28,19 @@ class _BookPageState extends State<BookPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    context.read<PlaylistCubit>().getBookAudioTracks(
-          context,
-          widget.book.id ?? "undefined",
-        );
+    getAudioTracks();
+  }
+
+  void getAudioTracks() async {
+    List<String> list = context.read<BooksCubit>().state.downloadedBooks;
+    if (list.contains(widget.book.id ?? "undefined")) {
+      
+    } else {
+      context.read<PlaylistCubit>().getBookAudioTracks(
+            context,
+            widget.book.id ?? "undefined",
+          );
+    }
   }
 
   @override
