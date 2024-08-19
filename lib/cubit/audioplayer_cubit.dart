@@ -11,19 +11,39 @@ class AudioplayerCubit extends Cubit<AudioplayerState> {
           AudioplayerState(
             audioHandler: handler,
           ),
-        );
+        ) {
+    _initAudioHandler();
+  }
+
+  MyAudioHandler _audioHandler = MyAudioHandler(bookId: "undefined");
+
+  Future<void> _initAudioHandler() async {
+    _audioHandler = await AudioService.init(
+      builder: () => state.audioHandler,
+      config: const AudioServiceConfig(
+        androidNotificationChannelId: 'uz.uictask.audiobook',
+        androidNotificationChannelName: 'AudioBook',
+        androidNotificationOngoing: true,
+      ),
+    );
+  }
 
   void setPlaylist(
     String bookId,
     String bookName,
     List<MediaItem> items, {
     int startPlaying = -1,
-  }) {
+    required Function onComplate,
+  }) async {
+    await state.audioHandler.stop();
+    print("stop audio handler");
     state.audioHandler.setBookId(bookId);
     state.audioHandler.setBookName(bookName);
-    state.audioHandler.initTracks(traks: items);
+    await state.audioHandler.initTracks(traks: items);
     if (startPlaying > 0) {
-      state.audioHandler.skipToQueueItem(startPlaying);
+      await state.audioHandler.skipToQueueItem(startPlaying);
     }
+    emit(state);
+    onComplate();
   }
 }

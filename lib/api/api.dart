@@ -32,7 +32,7 @@ class Api {
       List<Audiotrack> list = [];
       for (var element in response.data["sections"]) {
         list.add(Audiotrack.fromJson(element));
-        if (list.length > 16) {
+        if (list.length > 3) {
           break;
         }
       }

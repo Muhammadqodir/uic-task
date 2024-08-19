@@ -7,4 +7,12 @@ class AudioplayerState {
   AudioplayerState({
     required this.audioHandler,
   });
+
+  AudioplayerState copyWith({
+    MyAudioHandler? audioHandler,
+  }) {
+    return AudioplayerState(
+      audioHandler: audioHandler ?? this.audioHandler,
+    );
+  }
 }

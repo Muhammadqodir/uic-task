@@ -15,7 +15,7 @@ class AudioPlayerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MyAudioHandler audioHandler =
-        context.read<AudioplayerCubit>().state.audioHandler;
+        context.watch<AudioplayerCubit>().state.audioHandler;
     return StreamBuilder<MediaItem?>(
       stream: audioHandler.mediaItem,
       builder: (context, snapshot) {

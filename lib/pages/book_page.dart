@@ -9,8 +9,6 @@ import 'package:audiobook/widgets/cross_list_element.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class BookPage extends StatefulWidget {
   const BookPage({
@@ -29,12 +27,12 @@ class _BookPageState extends State<BookPage> {
     // TODO: implement initState
     super.initState();
     getAudioTracks();
+    print("BookId book page:" + (widget.book.id ?? "undefined"));
   }
 
   void getAudioTracks() async {
     List<String> list = context.read<BooksCubit>().state.downloadedBooks;
     if (list.contains(widget.book.id ?? "undefined")) {
-      
     } else {
       context.read<PlaylistCubit>().getBookAudioTracks(
             context,
@@ -47,6 +45,7 @@ class _BookPageState extends State<BookPage> {
   Widget build(BuildContext context) {
     PlaylistState state = context.watch<PlaylistCubit>().state;
     List<MediaItem> items = state.getMediaItems();
+    if (items.isNotEmpty) print(items.first.title);
     return ListLayout(
       back: true,
       body: state.isLoading
@@ -70,12 +69,14 @@ class _BookPageState extends State<BookPage> {
                           audioplayerCubit.state.audioHandler
                               .skipToQueueItem(items.indexOf(e));
                         } else {
+                          print("Updating playlist");
                           context.read<AudioplayerCubit>().setPlaylist(
-                                widget.book.id ?? "undefined",
-                                widget.book.title ?? "undefined",
-                                items,
-                                startPlaying: items.indexOf(e),
-                              );
+                              widget.book.id ?? "undefined",
+                              widget.book.title ?? "undefined",
+                              items,
+                              startPlaying: items.indexOf(e), onComplate: () {
+                            setState(() {});
+                          });
                         }
                       },
                       child: AudiotrackWidget(

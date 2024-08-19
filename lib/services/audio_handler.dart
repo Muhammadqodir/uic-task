@@ -64,7 +64,9 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     audioPlayer.playbackEventStream.listen(_boardcastState);
 
     final audioSource = traks.map(_createAudioSource);
-
+    try {
+      audioPlayer.stop();
+    } catch (e) {}
     await audioPlayer.setAudioSource(
       ConcatenatingAudioSource(
         children: audioSource.toList(),

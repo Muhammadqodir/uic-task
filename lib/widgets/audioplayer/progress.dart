@@ -29,8 +29,8 @@ class ProgressBarWidget extends StatelessWidget {
             progressBarColor: primaryColor,
             thumbGlowColor: primaryColor.withAlpha(100),
             baseBarColor: primaryColor.withAlpha(100),
-            onSeek: (value) {
-              audioHandler.seek(value);
+            onSeek: (value) async {
+              await audioHandler.seek(value);
             },
           );
         }

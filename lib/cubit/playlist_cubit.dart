@@ -21,6 +21,7 @@ class PlaylistCubit extends Cubit<PlaylistState> {
 
   Future<void> getBookAudioTracks(BuildContext context, String id) async {
     setLoading(true);
+    emit(state.copyWith(list: []));
     ApiResponse<List<Audiotrack>> res = await Api().getAudioTracks(id);
     if (res.isSuccess) {
       emit(state.copyWith(list: res.data));

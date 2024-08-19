@@ -28,7 +28,7 @@ class AudiotrackWidget extends StatelessWidget {
             stream: audioHandler.mediaItem,
             builder: (context, snapshot) {
               if (snapshot.data != null) {
-                return getView(context, snapshot.data! == track);
+                return getView(context, snapshot.data!.title == track.title);
               }
               return const SizedBox.shrink();
             },
