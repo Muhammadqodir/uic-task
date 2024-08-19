@@ -72,9 +72,8 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         children: audioSource.toList(),
       ),
     );
-
-    final newQueue = queue.value..addAll(traks);
-    queue.add(newQueue);
+    queue.value.clear();
+    queue.value = traks;
 
     _listenForCurrentAudiotrackIndexChanges();
 

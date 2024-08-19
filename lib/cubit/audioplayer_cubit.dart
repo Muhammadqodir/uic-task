@@ -10,6 +10,7 @@ class AudioplayerCubit extends Cubit<AudioplayerState> {
       : super(
           AudioplayerState(
             audioHandler: handler,
+            isLoading: false,
           ),
         ) {
     _initAudioHandler();
@@ -35,6 +36,7 @@ class AudioplayerCubit extends Cubit<AudioplayerState> {
     int startPlaying = -1,
     required Function onComplate,
   }) async {
+    emit(state.copyWith(isLoading: true));
     await state.audioHandler.stop();
     print("stop audio handler");
     state.audioHandler.setBookId(bookId);
@@ -43,7 +45,7 @@ class AudioplayerCubit extends Cubit<AudioplayerState> {
     if (startPlaying > 0) {
       await state.audioHandler.skipToQueueItem(startPlaying);
     }
-    emit(state);
+    emit(state.copyWith(isLoading: false));
     onComplate();
   }
 }
