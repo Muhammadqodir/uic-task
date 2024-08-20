@@ -82,6 +82,30 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     });
   }
 
+  Future<void> initTracksFromCache(
+      {required List<MediaItem> traks,
+      required List<UriAudioSource> cachedAudioFiles}) async {
+    audioPlayer.playbackEventStream.listen(_boardcastState);
+
+    final audioSource = cachedAudioFiles;
+    try {
+      audioPlayer.stop();
+    } catch (e) {}
+    await audioPlayer.setAudioSource(
+      ConcatenatingAudioSource(
+        children: audioSource,
+      ),
+    );
+    queue.value.clear();
+    queue.value = traks;
+
+    _listenForCurrentAudiotrackIndexChanges();
+
+    audioPlayer.processingStateStream.listen((state) {
+      if (state == ProcessingState.completed) skipToNext();
+    });
+  }
+
   @override
   Future<void> play() async => audioPlayer.play();
 

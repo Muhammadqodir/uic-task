@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:audiobook/services/audio_handler.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:meta/meta.dart';
 
 part 'audioplayer_state.dart';
@@ -30,6 +33,29 @@ class AudioplayerCubit extends Cubit<AudioplayerState> {
   }
 
   void setPlaylist(
+    String bookId,
+    String bookName,
+    List<MediaItem> items, {
+    int startPlaying = -1,
+    required Function onComplate,
+  }) async {
+    emit(state.copyWith(isLoading: true));
+    await state.audioHandler.stop();
+    print("stop audio handler");
+    state.audioHandler.setBookId(bookId);
+    state.audioHandler.setBookName(bookName);
+    await state.audioHandler.initTracksFromCache(
+      traks: items,
+      cachedAudioFiles: [],
+    );
+    if (startPlaying > 0) {
+      await state.audioHandler.skipToQueueItem(startPlaying);
+    }
+    emit(state.copyWith(isLoading: false));
+    onComplate();
+  }
+
+  void setPlaylistFromCache(
     String bookId,
     String bookName,
     List<MediaItem> items, {

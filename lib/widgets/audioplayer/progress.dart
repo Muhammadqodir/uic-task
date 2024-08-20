@@ -34,7 +34,7 @@ class ProgressBarWidget extends StatelessWidget {
             },
           );
         }
-        return SizedBox.shrink();
+        return const CupertinoActivityIndicator();
       },
     );
   }

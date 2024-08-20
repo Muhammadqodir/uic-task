@@ -4,6 +4,7 @@ import 'package:audiobook/services/audio_handler.dart';
 import 'package:audiobook/widgets/ontap_scale.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_to_airplay/flutter_to_airplay.dart';
 
 class ControlButtons extends StatelessWidget {
   const ControlButtons({
@@ -21,6 +22,8 @@ class ControlButtons extends StatelessWidget {
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                SizedBox(width: 48,),
+                Spacer(),
                 OnTapScaleAndFade(
                   onTap: () {
                     audioHandler.skipToPrevious();
@@ -56,6 +59,8 @@ class ControlButtons extends StatelessWidget {
                     size: 32,
                   ),
                 ),
+                Spacer(),
+                AirPlayIconButton()
               ],
             );
           }

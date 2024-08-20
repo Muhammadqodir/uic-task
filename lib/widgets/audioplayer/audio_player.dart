@@ -71,7 +71,6 @@ class AudioPlayerWidget extends StatelessWidget {
                       ControlButtons(
                         audioHandler: audioHandler,
                       ),
-                      AirPlayIconButton()
                     ],
                   ),
                 );

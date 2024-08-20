@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:audiobook/cubit/audioplayer_cubit.dart';
 import 'package:audiobook/cubit/books_cubit.dart';
@@ -9,6 +11,7 @@ import 'package:audiobook/widgets/cross_list_element.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class BookPage extends StatefulWidget {
   const BookPage({
@@ -33,6 +36,10 @@ class _BookPageState extends State<BookPage> {
   void getAudioTracks() async {
     List<String> list = context.read<BooksCubit>().state.downloadedBooks;
     if (list.contains(widget.book.id ?? "undefined")) {
+      context.read<PlaylistCubit>().getBookAudioTracksFromCache(
+            context,
+            widget.book.id ?? "undefined",
+          );
     } else {
       context.read<PlaylistCubit>().getBookAudioTracks(
             context,
@@ -61,23 +68,28 @@ class _BookPageState extends State<BookPage> {
               children: items
                   .map(
                     (e) => CrossListElement(
-                      onPressed: () {
-                        AudioplayerCubit audioplayerCubit =
-                            context.read<AudioplayerCubit>();
-                        if (audioplayerCubit.state.audioHandler.bookId ==
-                            widget.book.id) {
-                          audioplayerCubit.state.audioHandler
-                              .skipToQueueItem(items.indexOf(e));
-                        } else {
-                          print("Updating playlist");
-                          context.read<AudioplayerCubit>().setPlaylist(
-                              widget.book.id ?? "undefined",
-                              widget.book.title ?? "undefined",
-                              items,
-                              startPlaying: items.indexOf(e), onComplate: () {
-                            setState(() {});
-                          });
-                        }
+                      onPressed: () async {
+                        // AudioplayerCubit audioplayerCubit =
+                        //     context.read<AudioplayerCubit>();
+                        // if (audioplayerCubit.state.audioHandler.bookId ==
+                        //     widget.book.id) {
+                        //   audioplayerCubit.state.audioHandler
+                        //       .skipToQueueItem(items.indexOf(e));
+                        // } else {
+                        //   print("Updating playlist");
+                        //   context.read<AudioplayerCubit>().setPlaylist(
+                        //       widget.book.id ?? "undefined",
+                        //       widget.book.title ?? "undefined",
+                        //       items,
+                        //       startPlaying: items.indexOf(e), onComplate: () {
+                        //     setState(() {});
+                        //   });
+                        // }
+                        print(e.id);
+                        File? test =
+                            await DefaultCacheManager().getSingleFile(e.id);
+                        print("Finished");
+                        print(test);
                       },
                       child: AudiotrackWidget(
                         track: e,

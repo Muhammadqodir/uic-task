@@ -25,7 +25,7 @@ class _DownloadBookBtnState extends State<DownloadBookBtn> {
   @override
   Widget build(BuildContext context) {
     return OnTapScaleAndFade(
-      child: Container(
+      child: SizedBox(
         width: 40,
         height: 40,
         child: Stack(
