@@ -1,6 +1,6 @@
 {
-    "name": "audiobook",
-    "short_name": "audiobook",
+    "name": "audiobook_player",
+    "short_name": "audiobook_player",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

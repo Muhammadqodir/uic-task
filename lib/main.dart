@@ -1,54 +1,73 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:audio_service/audio_service.dart';
-import 'package:audiobook/cubit/audioplayer_cubit.dart';
-import 'package:audiobook/cubit/books_cubit.dart';
-import 'package:audiobook/cubit/playlist_cubit.dart';
-import 'package:audiobook/pages/splash_page.dart';
-import 'package:audiobook/services/audio_handler.dart';
+import 'package:audiobook_player/core/audio_service.dart';
+import 'package:audiobook_player/presentation/bloc/audio_player_bloc.dart';
+import 'package:audiobook_player/presentation/bloc/audiotrack_bloc.dart';
+import 'package:audiobook_player/presentation/widgets/audioplayer/audio_player.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-MyAudioHandler _audioHandler = MyAudioHandler(bookId: "undefined");
+import 'di/injection.dart';
+import 'presentation/bloc/book_bloc.dart';
+import 'presentation/pages/book_list_page.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+void main() async {
+  await initializeDependencies();
+  MyAudioHandler _myAudioHandler = await _initAudioService();
+  runApp(MyApp(
+    audioHandler: _myAudioHandler,
+  ));
+}
 
-  _audioHandler = await AudioService.init(
-      builder: () => MyAudioHandler(bookId: "undefined"),
-      config: const AudioServiceConfig(
-        androidNotificationChannelId: 'uz.uictask.audiobook',
-        androidNotificationChannelName: 'AudioBook',
-        androidNotificationOngoing: true,
-      ));
-
-  runApp(const MyApp());
+Future<MyAudioHandler> _initAudioService() async {
+  return await AudioService.init(
+    builder: () => MyAudioHandler(),
+    config: const AudioServiceConfig(
+      androidNotificationChannelId: 'uz.uictask.audiobook',
+      androidNotificationChannelName: 'AudioBook',
+      androidNotificationOngoing: true,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+  final MyAudioHandler audioHandler;
+  const MyApp({
+    Key? key,
+    required this.audioHandler,
+  }) : super(key: key);
+  
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => BooksCubit(),
+        BlocProvider<BookBloc>(
+          create: (_) => getIt<BookBloc>()..add(const GetBooksEvent()),
         ),
-        BlocProvider(
-          create: (context) => PlaylistCubit(),
+        BlocProvider<AudiotrackBloc>(
+          create: (_) => getIt<AudiotrackBloc>(),
         ),
-        BlocProvider(
-          create: (context) => AudioplayerCubit(handler: _audioHandler),
+        BlocProvider<AudioPlayerBloc>(
+          create: (_) => AudioPlayerBloc(audioHandler),
         ),
       ],
       child: MaterialApp(
-        title: 'AudioBook',
+        title: 'Audiobook Player',
+        home: BookListPage(),
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: false,
-        ),
-        home: const SplashPage(),
+        builder: (context, child) {
+          return Stack(
+            children: [
+              child!,
+              const Positioned(
+                left: 0,
+                bottom: 0,
+                right: 0,
+                child: AudioPlayerWidget(),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
